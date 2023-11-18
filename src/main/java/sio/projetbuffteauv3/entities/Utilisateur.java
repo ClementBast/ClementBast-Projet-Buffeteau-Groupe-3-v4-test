@@ -3,12 +3,11 @@ package sio.projetbuffteauv3.entities;
 public class Utilisateur {
     private String email;
     private String motDePasse;
-    private String role;
-
-    public Utilisateur(String email, String motDePasse){
+    private int id;
+    public Utilisateur(String email, String motDePasse, int id){
         this.email = email;
         this.motDePasse = motDePasse;
-
+        this.id = id;
     }
 
     public String getEmail() {
@@ -25,5 +24,13 @@ public class Utilisateur {
 
     public void setMotDePasse(String motDePasse) {
         this.motDePasse = motDePasse;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

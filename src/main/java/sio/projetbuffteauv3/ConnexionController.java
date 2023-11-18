@@ -7,6 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -15,6 +16,7 @@ import javafx.stage.Stage;
 import sio.projetbuffteauv3.entities.Utilisateur;
 import sio.projetbuffteauv3.tools.ConnexionBDD;
 import sio.projetbuffteauv3.tools.ServiceConnexion;
+import sio.projetbuffteauv3.tools.ServiceUtilisateur;
 
 
 import java.io.IOException;
@@ -25,8 +27,8 @@ import java.util.ResourceBundle;
 public class ConnexionController implements Initializable {
     ConnexionBDD maCnx;
     ServiceConnexion serviceConnexion;
-    Utilisateur connexUtilisateur;
-    Utilisateur verifUtilisateur;
+    ServiceUtilisateur serviceUtilisateur;
+
 
     @FXML
     private TextField txtEmail;
@@ -41,9 +43,14 @@ public class ConnexionController implements Initializable {
         try {
             maCnx = new ConnexionBDD();
             serviceConnexion = new ServiceConnexion();
+            serviceUtilisateur = new ServiceUtilisateur();
         } catch (ClassNotFoundException | SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+    public boolean estAdresseEmailValide(String email) {
+        String regex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        return email.matches(regex);
     }
     @FXML
     public void onBtnConnexionClicked(Event event) throws SQLException, IOException {
@@ -51,14 +58,44 @@ public class ConnexionController implements Initializable {
             String unEmail = txtEmail.getText();
             String unMdp = txtMdp.getText();
 
+
+        if(txtEmail.getText().isEmpty() || !estAdresseEmailValide(unEmail)){
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erreur mail");
+            alert.setContentText("Merci de rentrer une adresse mail valide");
+            alert.setHeaderText("");
+            alert.showAndWait();
+        } else if (txtMdp.getText().isEmpty()){
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erreur mot de passe");
+            alert.setContentText("Merci de rentrer un mot de passe");
+            alert.setHeaderText("");
+            alert.showAndWait();
+        }
+
+        if(estAdresseEmailValide(unEmail)){
             if (serviceConnexion.verifEmailMdpUtilisateur(unEmail, unMdp) == 1) {
+                int id = serviceUtilisateur.getIdUtilisateurByMail(unEmail);
+                Utilisateur unUtilisateur = new Utilisateur(unEmail, unMdp, id);
+
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("etudiant-view.fxml"));
                 Parent root = fxmlLoader.load();
+
+                EtudiantController etudiantController = fxmlLoader.getController();
+                etudiantController.initDatas(unUtilisateur);
+
                 Stage stage = new Stage();
                 stage.setScene(new Scene(root));
                 stage.show();
                 ((Node) (event.getSource())).getScene().getWindow().hide();
 
+            }else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Identifiants incorrects");
+                alert.setContentText("Veuillez verifier vos informations et ré-essayer");
+                alert.setHeaderText("");
+                alert.showAndWait();
+            }
     }
     }
 }

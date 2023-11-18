@@ -1,23 +1,29 @@
 package sio.projetbuffteauv3;
 
+import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 
+import sio.projetbuffteauv3.entities.Competence;
 import sio.projetbuffteauv3.entities.Demande;
-import sio.projetbuffteauv3.tools.ConnexionBDD;
-import sio.projetbuffteauv3.tools.ServicesDemandes;
+import sio.projetbuffteauv3.entities.Matiere;
+import sio.projetbuffteauv3.entities.Utilisateur;
+import sio.projetbuffteauv3.tools.*;
 
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class EtudiantController implements Initializable {
 
+    public static Utilisateur setUtilisateur;
     ConnexionBDD maCnx;
-    ServicesDemandes servicesDemandes;
+
+
 
     @javafx.fxml.FXML
     private Button btnComp;
@@ -45,8 +51,6 @@ public class EtudiantController implements Initializable {
     private Button btnModifierComp;
     @javafx.fxml.FXML
     private AnchorPane apCreerComp;
-    @javafx.fxml.FXML
-    private ComboBox cboCompSousMat;
     @javafx.fxml.FXML
     private ComboBox cboCompMat;
     @javafx.fxml.FXML
@@ -127,10 +131,45 @@ public class EtudiantController implements Initializable {
     private AnchorPane apStatsEtudiant;
     @javafx.fxml.FXML
     private TreeView tvStatsEtudfiant;
+    ServicesDemandes servicesDemandes = new ServicesDemandes();
+    ServiceConnexion serviceConnexion = new ServiceConnexion();
+    ServicesCompetences servicesCompetences = new ServicesCompetences();
+    ServiceUtilisateur serviceUtilisateur = new ServiceUtilisateur();
+    ServicesMatieres servicesMatieres = new ServicesMatieres();
+
+    Utilisateur unUtilisateur;
+    @javafx.fxml.FXML
+    private TableView tvCreerCompSousMat;
+    @javafx.fxml.FXML
+    private TableColumn tcCreerCompSousMat;
+
+    public void initDatas (Utilisateur c)
+    {
+        unUtilisateur = c;
+    }
 
     @javafx.fxml.FXML
-    public void btnCompClicked(Event event) {
+    public void btnCompClicked(Event event) throws SQLException {
+
         apComp.toFront();
+
+        int idUser = serviceUtilisateur.getIdUtilisateurByMail(unUtilisateur.getEmail());
+
+        tcCompMat.setCellValueFactory(new PropertyValueFactory<>("matiereComp"));
+        tvCompMatières.setItems(servicesCompetences.GetMatiereCompetences(idUser));
+
+    }
+    @javafx.fxml.FXML
+    public void tvCompMatClicked(Event event) throws SQLException {
+
+        Competence compSelec = (Competence) tvCompMatières.getSelectionModel().getSelectedItem();
+        String matiere = compSelec.getMatiereComp();
+        int idUser = serviceUtilisateur.getIdUtilisateurByMail(unUtilisateur.getEmail());
+
+       tcCompSousMat.setCellValueFactory(new PropertyValueFactory<>("sousMatiereComp"));
+       tvCompSousMat.setItems(servicesCompetences.GetSousMatiereCompetences(idUser, matiere));
+
+        System.out.println(tvCompMatières.getSelectionModel().getSelectedItem().toString());
     }
 
     @javafx.fxml.FXML
@@ -154,9 +193,21 @@ public class EtudiantController implements Initializable {
     }
 
     @javafx.fxml.FXML
-    public void btnCreerCompClicked(Event event) {
+    public void btnCreerCompClicked(Event event) throws SQLException {
+
         apCreerComp.toFront();
+        cboCompMat.setItems(servicesMatieres.getAllMatieres());
     }
+    @javafx.fxml.FXML
+    public void cboCompMatClicked(Event event) throws SQLException {
+        String matiereSelec = (String) cboCompMat.getSelectionModel().getSelectedItem();
+
+
+        tcCreerCompSousMat.setCellValueFactory(new PropertyValueFactory<>("sousMatiere"));
+        tvCreerCompSousMat.setItems(servicesMatieres.getAllSousMatieresByMatieres(matiereSelec));
+        System.out.println(servicesMatieres.getAllSousMatieresByMatieres(matiereSelec));
+    }
+
 
     @javafx.fxml.FXML
     public void btnModifierCompClicked(Event event) {
@@ -196,6 +247,7 @@ public class EtudiantController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
         try {
+
             maCnx = new ConnexionBDD();
             tcLesAidesMat.setCellValueFactory(new PropertyValueFactory<Demande, Integer>("matiere"));
             tcLesAidesSousMat.setCellValueFactory(new PropertyValueFactory<Demande, Integer>("sousmatiere"));
@@ -210,6 +262,8 @@ public class EtudiantController implements Initializable {
         throw new RuntimeException(e);
     }
     }
+
+
 }
 
 

@@ -14,7 +14,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="ap" stylesheets="@../../Styles/mesStyles.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sio.projetbuffteauv3.EtudiantController">
    <children>
       <AnchorPane prefHeight="100.0" prefWidth="600.0" style="-fx-background-color: lightblue;">
@@ -81,7 +80,7 @@
       </AnchorPane>
       <AnchorPane fx:id="apComp" layoutX="100.0" layoutY="100.0" prefHeight="300.0" prefWidth="500.0" styleClass="ap">
          <children>
-            <TableView fx:id="tvCompMatières" layoutX="75.0" layoutY="28.0" prefHeight="200.0" prefWidth="130.0">
+            <TableView fx:id="tvCompMatières" layoutX="75.0" layoutY="28.0" onMouseClicked="#tvCompMatClicked" prefHeight="200.0" prefWidth="130.0">
               <columns>
                 <TableColumn fx:id="tcCompMat" prefWidth="130.0" text="Matières" />
               </columns>
@@ -93,15 +92,6 @@
             </TableView>
             <Button fx:id="btnCreerComp" layoutX="84.0" layoutY="247.0" mnemonicParsing="false" onMouseClicked="#btnCreerCompClicked" text="Créer compétence" />
             <Button fx:id="btnModifierComp" layoutX="310.0" layoutY="247.0" mnemonicParsing="false" onMouseClicked="#btnModifierCompClicked" text="Modifier" />
-         </children>
-      </AnchorPane>
-      <AnchorPane fx:id="apCreerComp" layoutX="100.0" layoutY="100.0" prefHeight="300.0" prefWidth="500.0" styleClass="ap">
-         <children>
-            <ComboBox fx:id="cboCompSousMat" layoutX="176.0" layoutY="156.0" prefWidth="150.0" />
-            <ComboBox fx:id="cboCompMat" layoutX="177.0" layoutY="87.0" prefWidth="150.0" />
-            <Label layoutX="214.0" layoutY="133.0" text="Sous-matières" />
-            <Label layoutX="227.0" layoutY="60.0" text="Matières" />
-            <Button fx:id="btnCreerCompValider" layoutX="226.0" layoutY="215.0" mnemonicParsing="false" onMouseClicked="#btnCreerCompValiderClicked" text="Valider" />
          </children>
       </AnchorPane>
       <AnchorPane fx:id="apModifierComp" layoutX="100.0" layoutY="100.0" prefHeight="300.0" prefWidth="500.0" styleClass="ap">
@@ -180,6 +170,19 @@
                </columns>
             </TableView>
             <Button fx:id="btnValiderLesAides" layoutX="191.0" layoutY="261.0" mnemonicParsing="false" onMouseClicked="#btnValiderLesAidesClicked" text="Traiter la demande " />
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="apCreerComp" layoutX="100.0" layoutY="100.0" prefHeight="300.0" prefWidth="500.0" styleClass="ap">
+         <children>
+            <ComboBox fx:id="cboCompMat" layoutX="35.0" layoutY="116.0" onMouseClicked="#cboCompMatClicked" prefWidth="150.0" />
+            <Label layoutX="333.0" layoutY="29.0" text="Sous-matières" />
+            <Label layoutX="87.0" layoutY="57.0" text="Matières" />
+            <Button fx:id="btnCreerCompValider" layoutX="84.0" layoutY="177.0" mnemonicParsing="false" onMouseClicked="#btnCreerCompValiderClicked" text="Valider" />
+            <TableView fx:id="tvCreerCompSousMat" layoutX="279.0" layoutY="57.0" prefHeight="200.0" prefWidth="200.0">
+              <columns>
+                <TableColumn fx:id="tcCreerCompSousMat" prefWidth="199.0" text="Sous matières" />
+              </columns>
+            </TableView>
          </children>
       </AnchorPane>
       <AnchorPane fx:id="apStatsEtudiant" layoutX="100.0" layoutY="100.0" prefHeight="300.0" prefWidth="500.0" styleClass="ap">
